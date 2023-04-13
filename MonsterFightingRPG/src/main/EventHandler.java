@@ -67,11 +67,25 @@ public class EventHandler {
 		if(canTouchEvent == true) {
 			// Map is different than original
 			// Else if is used to prevent teleport from triggering twice 
-			if(hit(0, 26, 16,"right") == true) {damagePit(gp.dialogueState);}
-			else if(hit(0, 23, 7, "up") == true) {healingPool(gp.dialogueState);}
-			else if(hit(0, 8, 40, "any") == true) {teleport(1, 12, 13);}
-			else if(hit(1, 12, 13, "any") == true) {teleport(0, 8, 40);}
-			else if(hit(1, 12, 9, "up") == true) {speak(gp.npc[1][0]);}
+			
+			if(hit(0, 4, 17, "any") == true) {teleport(1,6,5);}
+			else if(hit(1,6,5,"any") == true) {teleport(0,5,17);}
+			else if(hit(0,17,18,"right") == true) {healingPool(gp.dialogueState);}
+			else if(hit(0,6,36,"left") == true) {healingPool(gp.dialogueState);}
+			else if(hit(0,29,6,"up") == true) {healingPool(gp.dialogueState);}
+			else if(hit(0,44,35,"up") == true) {healingPool(gp.dialogueState);}
+			else if(hit(0,12,44,"any") == true) {teleport(2,27,25);}
+			else if(hit(1,42,24,"right") == true) {healingPool(gp.dialogueState);}
+			else if(hit(1,18,7,"up") == true) {healingPool(gp.dialogueState);}
+			else if(hit(1,6,42,"left") == true) {healingPool(gp.dialogueState);}
+			else if(hit(2,27,26,"any") == true) {teleport(0,13,45);}
+			else if(hit(2, 27, 21, "up") == true) {speak(gp.npc[2][0]);}
+			
+//			if(hit(0, 26, 16,"right") == true) {damagePit(gp.dialogueState);}
+//			else if(hit(0, 23, 7, "up") == true) {healingPool(gp.dialogueState);}
+//			else if(hit(0, 8, 40, "any") == true) {teleport(1, 12, 13);}
+//			else if(hit(1, 12, 13, "any") == true) {teleport(0, 8, 40);}
+//			else if(hit(1, 12, 9, "up") == true) {speak(gp.npc[1][0]);}
 		}
 		
 		

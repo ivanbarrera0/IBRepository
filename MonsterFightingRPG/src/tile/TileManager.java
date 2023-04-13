@@ -21,25 +21,55 @@ public class TileManager {
 	public TileManager(GamePanel gp) {
 		this.gp = gp;
 		
-		tile = new Tile[10];
+		// Updated from 10 to allow more tiles
+		tile = new Tile[30];
 		mapTileNum = new int[gp.maxMap][gp.maxWorldCol][gp.maxWorldRow];
 		
 		getTileImage();
-		loadMap("/maps/world01.txt", 0);
-		loadMap("/maps/interior01.txt", 1);
+		loadMap("/maps/NewMap3.txt", 0);
+		loadMap("/maps/CaveMap.txt", 1);
+		loadMap("/maps/merchanthut.txt", 2);
 	}
 	
 	public void getTileImage() {
 			
-			setup(0, "grass", false);
+		
+		setup(0, "000", false);
+		setup(1, "033", false);
+		setup(2, "036", false);
+		setup(3, "037", false);
+		setup(4, "appletree", true);
+		setup(5, "bellflower", false);
+		setup(6, "cave", true);
+		setup(7, "cave_dirt_down", true);
+		setup(8, "cave_dirt_left", true);
+		setup(9, "cave_dirt_right", true);
+		setup(10, "cave_dirt_top", true);
+		setup(11, "cherryblossomtree", false);
+		setup(12, "dirt", false);
+		setup(13, "earth", false);
+		setup(14, "grass", false);
+		setup(15, "mushroom", false);
+		setup(16, "sunflower", false);
+		setup(17, "table01", true);
+		setup(18, "tree", true);
+		setup(19, "water001", true);
+		setup(20, "water002", true);
+		setup(21, "floor01", false);
+		setup(22, "wall", true);
+		
+		// Here is the old tiles
+		/*
+			setup(0, "newgrass", false);
 			setup(1, "wall", true);
-			setup(2, "water", true);
+			setup(2, "newwater", true);
 			setup(3, "earth", false);
-			setup(4, "tree", true);
+			setup(4, "newtree", true);
 			setup(5, "sand", false);
 			setup(6, "hut", false);
 			setup(7, "floor01", false);
 			setup(8, "table01", true);
+			*/
 	}
 	
 	public void setup(int index, String imageName, boolean collision) {

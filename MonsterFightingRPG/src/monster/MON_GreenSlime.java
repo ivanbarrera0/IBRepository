@@ -21,10 +21,10 @@ public class MON_GreenSlime extends Entity {
 		type = type_monster;
 		name = "Green Slime";
 		speed = 1;
-		maxLife = 4;
+		maxLife = 5;
 		life = maxLife;
-		attack = 5;
-		defense = 0;
+		attack = 3;
+		defense = 1;
 		exp = 2;
 		projectile = new OBJ_Rock(gp);
 
@@ -118,7 +118,6 @@ public class MON_GreenSlime extends Entity {
 	public void damageReaction() {
 
 		actionLockCounter = 0;
-		//direction = gp.player.direction;
 		// Aggro Monsters after taking damage
 		onPath = true;
 	}

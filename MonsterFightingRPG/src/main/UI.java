@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import entity.Entity;
+import monster.MON_GreenSlime;
 import object.OBJ_Coin_Bronze;
 import object.OBJ_Heart;
 import object.OBJ_ManaCrystal;
@@ -15,6 +16,7 @@ import object.OBJ_ManaCrystal;
 public class UI {
 
 	GamePanel gp;
+	CombatDialogue cd = new CombatDialogue(gp);
 	Graphics2D g2;
 	public Font times_new_roman40, times_new_roman80B;
 	BufferedImage heart_full, heart_half, heart_blank, crystal_full, crystal_blank, coin;
@@ -23,16 +25,26 @@ public class UI {
 	ArrayList<Integer> messageCounter = new ArrayList<>();
 	public boolean gameFinished = false;
 	public String currentDialogue = "";
+	public String combatEvent = "";
+	public boolean isCritical = false;
 	public int commandNum = 0;
 	public int playerSlotCol = 0;
 	public int playerSlotRow = 0;
 	public int npcSlotCol = 0;
 	public int npcSlotRow = 0;
+	public int monsterIndexDisplay = 999;
 	int subState = 0;
 	int counter = 0;
 	public Entity npc;
 	int charIndex = 0;
 	String combinedText = "";
+
+	// Combat Values
+	int monsterIndex;
+	boolean itemUsedInCombat = false;
+	boolean enemyTurn = false;
+	boolean enemyIsDefeated = false;
+	boolean playerIsDefeated = false;
 
 	public UI(GamePanel gp) {
 		this.gp = gp;
@@ -105,6 +117,26 @@ public class UI {
 		// Trade State
 		if (gp.gameState == gp.tradeState) {
 			drawTradeScreen();
+		}
+		// Combat State
+		if (gp.gameState == gp.combatState) {
+			drawCombatMenu();
+		}
+		// Combat Dialogue State
+		if (gp.gameState == gp.combatDialogueState) {
+			drawCombat();
+			drawCombatDialogueScreen();
+		}
+		// Combat Inventory State
+		if (gp.gameState == gp.combatInventoryState) {
+			drawCombat();
+			drawCombatInventoryScreen(gp.player);
+		}
+		if (gp.gameState == gp.transitionToCombatState) {
+			drawTransitionToCombatScreen();
+		}
+		if(gp.gameState == gp.transitionFromCombatState) {
+			drawTransitionFromCombatScreen();
 		}
 	}
 
@@ -262,39 +294,38 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
 		x += gp.tileSize;
 		y += gp.tileSize;
-		
-		if(npc.dialogues[npc.dialogueSet][npc.dialogueIndex] != null) {
-			//currentDialogue = npc.dialogues[npc.dialogueSet][npc.dialogueIndex];
-			
+
+		if (npc.dialogues[npc.dialogueSet][npc.dialogueIndex] != null) {
+			// currentDialogue = npc.dialogues[npc.dialogueSet][npc.dialogueIndex];
+
 			// Dialogue is shown character by character
 			char characters[] = npc.dialogues[npc.dialogueSet][npc.dialogueIndex].toCharArray();
-			
-			if(charIndex < characters.length) {
-				
+
+			if (charIndex < characters.length) {
+
 				String s = String.valueOf(characters[charIndex]);
 				combinedText = combinedText + s;
 				currentDialogue = combinedText;
 				charIndex++;
 			}
 			//
-			
-			if(gp.keyH.enterPressed == true) {
-				
+
+			if (gp.keyH.enterPressed == true) {
+
 				charIndex = 0;
 				combinedText = "";
-				
-				if(gp.gameState == gp.dialogueState) {
-					
+
+				if (gp.gameState == gp.dialogueState) {
+
 					npc.dialogueIndex++;
 					gp.keyH.enterPressed = false;
 				}
 			}
-		}
-		else { // If no text is in the array
-			
+		} else { // If no text is in the array
+
 			npc.dialogueIndex = 0;
-			
-			if(gp.gameState == gp.dialogueState) {
+
+			if (gp.gameState == gp.dialogueState) {
 				gp.gameState = gp.playState;
 			}
 		}
@@ -826,7 +857,7 @@ public class UI {
 			gp.eHandler.previousEventY = gp.player.worldY;
 		}
 	}
-
+	
 	public void drawTradeScreen() {
 
 		switch (subState) {
@@ -877,7 +908,7 @@ public class UI {
 			g2.drawString(">", x - 24, y);
 			if (gp.keyH.enterPressed == true) {
 				commandNum = 0;
-				npc.startDialogue(npc,1);
+				npc.startDialogue(npc, 1);
 			}
 		}
 		g2.drawString("Leave", x, y);
@@ -931,7 +962,7 @@ public class UI {
 						gp.player.coin -= npc.inventory.get(itemIndex).price;
 					} else {
 						subState = 0;
-						npc.startDialogue(npc,3);
+						npc.startDialogue(npc, 3);
 					}
 				}
 			}
@@ -984,10 +1015,9 @@ public class UI {
 					subState = 0;
 					npc.startDialogue(npc, 4);
 				} else {
-					if(gp.player.inventory.get(itemIndex).amount > 1) {
+					if (gp.player.inventory.get(itemIndex).amount > 1) {
 						gp.player.inventory.get(itemIndex).amount--;
-					}
-					else {
+					} else {
 						gp.player.inventory.remove(itemIndex);
 					}
 					gp.player.coin += price;
@@ -995,6 +1025,472 @@ public class UI {
 			}
 		}
 
+	}
+
+	public void drawTransitionToCombatScreen() {
+
+		counter++;
+		g2.setColor(new Color(0, 0, 0, counter * 5));
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+		if (counter == 50) {
+			counter = 0;
+			gp.gameState = gp.combatState;
+		}
+	}
+	
+	public void drawTransitionFromCombatScreen() {
+		
+		gp.stopMusic();
+		gp.playMusic(0);
+		
+		counter++;
+		g2.setColor(new Color(0, 0, 0, counter * 5));
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+		if (counter == 50) {
+			counter = 0;
+			gp.gameState = gp.playState;
+		}
+	}
+
+	public void drawCombatMenu() {
+
+		g2.setColor(new Color(119, 255, 51));
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+//		int x;
+//		int y;
+//		String text;
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20f));
+
+		// Draw player on combat screen
+		g2.drawImage(gp.player.right1, (int) (gp.tileSize * 4.5), gp.tileSize * 5, gp.tileSize, gp.tileSize, null);
+
+		// Draw the player's hp
+		double oneScale = (double) gp.tileSize / gp.player.maxLife;
+		double hpBarValue = oneScale * gp.player.life;
+
+		g2.setColor(new Color(35, 35, 35));
+		g2.fillRect((int) (gp.tileSize * 4.5) - 1, gp.tileSize * 5 - 16, gp.tileSize, 12);
+
+		g2.setColor(new Color(255, 0, 30));
+		g2.fillRect((int) (gp.tileSize * 4.5), gp.tileSize * 5 - 15, (int) hpBarValue, 10);
+		
+		// Draw the value of player's life near the life bar
+		g2.drawString("Life: ", (int)(gp.tileSize*3.5), (int)(gp.tileSize*4.5));
+		g2.drawString(gp.player.life + "",gp.tileSize*4+20, (int)(gp.tileSize*4.5));
+		g2.drawString("/",gp.tileSize*4+40, (int)(gp.tileSize*4.5));
+		g2.drawString(gp.player.maxLife + "",gp.tileSize*5, (int)(gp.tileSize*4.5));
+		
+
+		// Draw enemy
+		// Get the entity, check to see if the enemy's index is not 999
+		// Check if the monster is not null
+		// if (gp.monster[gp.currentMap][monsterIndexDisplay] != null)
+
+		if (monsterIndexDisplay != 999 && gp.monster[gp.currentMap][monsterIndexDisplay] != null) {
+
+			// Get the monster's exp
+			cd.getMonsterExp(gp.monster[gp.currentMap][gp.ui.monsterIndexDisplay].exp);
+
+			g2.drawImage(gp.monster[gp.currentMap][monsterIndexDisplay].left1, (int) (gp.tileSize * 14),
+					gp.tileSize * 5, gp.tileSize, gp.tileSize, null);
+			// Draw the enemy's hp
+			oneScale = (double) gp.tileSize / gp.monster[gp.currentMap][monsterIndexDisplay].maxLife;
+			hpBarValue = oneScale * gp.monster[gp.currentMap][monsterIndexDisplay].life;
+			g2.setColor(new Color(35, 35, 35));
+			g2.fillRect((int) (gp.tileSize * 14) - 1, gp.tileSize * 5 - 16, gp.tileSize, 12);
+
+			g2.setColor(new Color(255, 0, 30));
+			g2.fillRect((int) (gp.tileSize * 14), gp.tileSize * 5 - 15, (int) hpBarValue, 10);
+		}
+		// The player exits combat because the enemy was defeated
+		else {
+			gp.gameState = gp.playState;
+			gp.stopMusic();
+			gp.playMusic(0);
+			gp.player.checkLevelUp();
+		}
+
+		// Check if Enemy is defeated
+
+		if (enemyIsDefeated == true) {
+			// Player gains exp
+			gp.player.exp += gp.monster[gp.currentMap][monsterIndexDisplay].exp;
+			// Player gains coins
+			int coins = (int) (gp.monster[gp.currentMap][monsterIndexDisplay].exp * (Math.random() * 10));
+			// Player can not get less than 2 coins per battle
+			if (coins < 2) {
+				coins = 2;
+			}
+			gp.player.coin += coins;
+			String coinsGained = coins + "";
+			enemyTurn = false;
+			enemyIsDefeated = false;
+			enemyDefeated(gp.monster[gp.currentMap][monsterIndexDisplay].name, coinsGained);
+			gp.monster[gp.currentMap][monsterIndexDisplay] = null;
+		}
+
+		// Allow enemy to attack after player's attack
+		if (enemyTurn == true) {
+			cd.damagedPlayer = gp.player.damagePlayerCombat(monsterIndexDisplay, gp.player.getDefense());
+			combat(1, gp.monster[gp.currentMap][monsterIndexDisplay].name, "Player");
+			enemyTurn = false;
+		}
+
+		// Look at how enemy is defeated to fix the issue of the string of damaging the
+		// player
+		// kills the player is skipped
+		if (gp.player.life <= 0) {
+			playerIsDefeated = true;
+			// playerDefeated();
+		}
+
+		switch (subState) {
+		case 0:
+			combat_menu();
+			break;
+		case 1:
+			combat_attack();
+			break;
+		case 2:
+			combat_item();
+//		case 3:
+//			combat_team();
+//			break;
+		}
+		gp.keyH.enterPressed = false;
+
+	}
+
+	public void combat_menu() {
+
+		int x = (int) (gp.tileSize * 2.5);
+		int y = gp.tileSize * 9;
+
+		int width = gp.tileSize * 14;
+		int height = (int) (gp.tileSize * 3);
+		drawSubWindow(x, y, width, height);
+
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
+
+		x += (int) (gp.tileSize * 1.5);
+		y += (int) (gp.tileSize * 1.5);
+
+		g2.drawString("Fight", x, y);
+		if (commandNum == 0) {
+			g2.drawString(">", x - 24, y);
+//			if (gp.keyH.enterPressed == true) {
+//			}
+		}
+
+		x += gp.tileSize * 3;
+		g2.drawString("Item", x, y);
+		if (commandNum == 1) {
+			g2.drawString(">", x - 24, y);
+//			if (gp.keyH.enterPressed == true) {
+//				// Show team members
+//			}
+		}
+
+		x += gp.tileSize * 3;
+		g2.drawString("Team", x, y);
+		if (commandNum == 2) {
+			g2.drawString(">", x - 24, y);
+//			if (gp.keyH.enterPressed == true) {
+//				// Consumables
+//			}
+		}
+
+		x += gp.tileSize * 3;
+		g2.drawString("Run", x, y);
+		if (commandNum == 3) {
+			g2.drawString(">", x - 24, y);
+		}
+	}
+
+	public void combat_attack() {
+
+		int x = (int) (gp.tileSize * 2.5);
+		int y = gp.tileSize * 9;
+		monsterIndex = gp.cChecker.checkEntity(gp.player, gp.monster);
+
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
+
+		x += (int) (gp.tileSize * 1.5);
+		y += (int) (gp.tileSize * 1.5);
+
+		g2.drawString("Fight", x, y);
+
+		if (enemyTurn == false) {
+			cd.damagedEnemy = gp.player.damageMonsterCombat(monsterIndex, gp.player.getAttack());
+			combat(0, "Player", gp.monster[gp.currentMap][monsterIndexDisplay].name);
+			enemyTurn = true;
+		}
+		
+		//gp.monster[gp.currentMap][monsterIndexDisplay].dying = true;
+
+		if (gp.monster[gp.currentMap][monsterIndexDisplay].life <= 0) {
+			gp.player.monsterIsDefeated(monsterIndexDisplay);
+			enemyIsDefeated = true;
+		}
+
+		if (gp.player.life <= 0) {
+			playerDefeated();
+		}
+	}
+
+	// Helper Method to have the gameState be combatInventoryState
+	public void combat_item() {
+
+		gp.gameState = gp.combatInventoryState;
+		// Monster is allowed to attack after player's chooses item
+		enemyTurn = true;
+	}
+
+// This is to allow the combat between player and enemy to be drawn
+	public void drawCombat() {
+
+		g2.setColor(new Color(119, 255, 51));
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20f));
+
+		// Draw player on combat screen
+		g2.drawImage(gp.player.right1, (int) (gp.tileSize * 4.5), gp.tileSize * 5, gp.tileSize, gp.tileSize, null);
+
+		// Draw the player's hp
+		double oneScale = (double) gp.tileSize / gp.player.maxLife;
+		double hpBarValue = oneScale * gp.player.life;
+
+		g2.setColor(new Color(35, 35, 35));
+		g2.fillRect((int) (gp.tileSize * 4.5) - 1, gp.tileSize * 5 - 16, gp.tileSize, 12);
+
+		g2.setColor(new Color(255, 0, 30));
+		g2.fillRect((int) (gp.tileSize * 4.5), gp.tileSize * 5 - 15, (int) hpBarValue, 10);
+		
+		g2.drawString("Life: ", (int)(gp.tileSize*3.5), (int)(gp.tileSize*4.5));
+		g2.drawString(gp.player.life + "",gp.tileSize*4+20, (int)(gp.tileSize*4.5));
+		g2.drawString("/",gp.tileSize*4+40, (int)(gp.tileSize*4.5));
+		g2.drawString(gp.player.maxLife + "",gp.tileSize*5, (int)(gp.tileSize*4.5));
+
+		// Draw enemy
+		// Get the entity
+		int monsterIndex = gp.cChecker.checkEntity(gp.player, gp.monster);
+		if (monsterIndex != 999) {
+			g2.drawImage(gp.monster[gp.currentMap][monsterIndex].left1, (int) (gp.tileSize * 14), gp.tileSize * 5,
+					gp.tileSize, gp.tileSize, null);
+
+			// Draw the enemy's hp
+			oneScale = (double) gp.tileSize / gp.monster[gp.currentMap][monsterIndex].maxLife;
+			hpBarValue = oneScale * gp.monster[gp.currentMap][monsterIndex].life;
+
+			g2.setColor(new Color(35, 35, 35));
+			g2.fillRect((int) (gp.tileSize * 14) - 1, gp.tileSize * 5 - 16, gp.tileSize, 12);
+
+			g2.setColor(new Color(255, 0, 30));
+			g2.fillRect((int) (gp.tileSize * 14), gp.tileSize * 5 - 15, (int) hpBarValue, 10);
+		}
+	}
+
+	public void drawCombatDialogueScreen() {
+
+		int x = (int) (gp.tileSize * 2.5);
+		int y = gp.tileSize * 9;
+
+		int width = gp.tileSize * 14;
+		int height = (int) (gp.tileSize * 3);
+		drawSubWindow(x, y, width, height);
+
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
+
+		x += (int) (gp.tileSize * 0.5);
+		y += (int) (gp.tileSize * 1);
+		
+		// Add the extra line for when a critical hit happens
+		if (isCritical == true) {
+			combatEvent += "\nIt's a critical hit!";
+			isCritical = false;
+		}
+		// Add the extra line to the string to say you were defeated
+		if (playerIsDefeated == true) {
+			combatEvent += "\nYou were slain...";
+		}
+
+		// Below is the code that allows the text in combat to be displayed 
+		// character by character
+		if (combatEvent != null) {
+			char characters[] = combatEvent.toCharArray();
+
+			if (charIndex < characters.length) {
+
+				String s = String.valueOf(characters[charIndex]);
+				combinedText = combinedText + s;
+				currentDialogue = combinedText;
+				charIndex++;
+			}
+
+			if (gp.keyH.enterPressed == true) {
+
+				charIndex = 0;
+				combinedText = "";
+				// Make the string null so that the if statement can proceed
+				combatEvent = null;
+			}
+		}
+		else {
+
+			if (gp.keyH.enterPressed == true) {
+				gp.keyH.enterPressed = false;
+				gp.ui.subState = 0;
+				gp.gameState = gp.combatState;
+			}
+		}
+		// originally combatEvent
+		for (String line : currentDialogue.split("\n")) {
+			g2.drawString(line, x, y);
+			y += 40;
+		}
+		//
+
+		if (playerIsDefeated == true && gp.keyH.enterPressed == true) {
+			gp.keyH.enterPressed = false;
+			playerIsDefeated = false;
+			gp.ui.subState = 0;
+			gp.gameState = gp.playState;
+			gp.stopMusic();
+			gp.playMusic(0);
+		}
+	}
+
+	public void drawCombatInventoryScreen(Entity entity) {
+
+		// Draw inventory methods
+
+		int frameX = 0;
+		int frameY = 0;
+		int frameWidth = 0;
+		int frameHeight = 0;
+		int slotCol = 0;
+		int slotRow = 0;
+
+		// Frame
+		frameX = gp.tileSize * 12;
+		frameY = gp.tileSize;
+		frameWidth = gp.tileSize * 6;
+		frameHeight = gp.tileSize * 5;
+		slotCol = playerSlotCol;
+		slotRow = playerSlotRow;
+
+		drawSubWindow(frameX, frameY, frameWidth, frameHeight);
+
+		// Slot
+		final int slotXstart = frameX + 20;
+		final int slotYstart = frameY + 20;
+		int slotX = slotXstart;
+		int slotY = slotYstart;
+		int slotSize = gp.tileSize + 3;
+
+		// Draw Player's Items, changes to entity inventory
+		for (int i = 0; i < entity.inventory.size(); i++) {
+
+			// Equip Cursor
+			if (entity.inventory.get(i) == entity.currentWeapon || entity.inventory.get(i) == entity.currentShield) {
+				g2.setColor(new Color(240, 190, 90));
+				g2.fillRoundRect(slotX, slotY, gp.tileSize, gp.tileSize, 10, 10);
+			}
+
+			g2.drawImage(entity.inventory.get(i).down1, slotX, slotY, null);
+
+			// Display Amount
+			if (entity == gp.player && entity.inventory.get(i).amount > 1) {
+
+				g2.setFont(g2.getFont().deriveFont(32F));
+				int amountX;
+				int amountY;
+
+				String s = "" + entity.inventory.get(i).amount;
+				amountX = getXForAlignToRightText(s, slotX + 44);
+				amountY = slotY + gp.tileSize;
+
+				// Shadow of the number
+				g2.setColor(new Color(60, 60, 60));
+				g2.drawString(s, amountX, amountY);
+				// Number
+				g2.setColor(Color.white);
+				g2.drawString(s, amountX - 3, amountY - 3);
+			}
+
+			slotX += slotSize;
+
+			if (i == 4 || i == 9 || i == 14) {
+				slotX = slotXstart;
+				slotY += slotSize;
+			}
+		}
+
+		// Cursor
+
+		int cursorX = slotXstart + (slotSize * slotCol);
+		int cursorY = slotYstart + (slotSize * slotRow);
+		int cursorWidth = gp.tileSize;
+		int cursorHeight = gp.tileSize;
+
+		// Draw Cursor
+		g2.setColor(Color.white);
+		g2.setStroke(new BasicStroke(3));
+		g2.drawRoundRect(cursorX, cursorY, cursorWidth, cursorHeight, 10, 10);
+
+		// Description Frame
+		int dFrameX = frameX;
+		int dFrameY = frameY + frameHeight;
+		int dFrameWidth = frameWidth;
+		int dFrameHeight = gp.tileSize * 3;
+
+		// Draw description text
+		int textX = dFrameX + 20;
+		int textY = dFrameY + gp.tileSize;
+		g2.setFont(g2.getFont().deriveFont(28F));
+
+		int itemIndex = getItemIndexOnSlot(slotCol, slotRow);
+
+		if (itemIndex < gp.player.inventory.size()) {
+
+			drawSubWindow(dFrameX, dFrameY, dFrameWidth, dFrameHeight);
+
+			for (String line : gp.player.inventory.get(itemIndex).description.split("\n")) {
+				g2.drawString(line, textX, textY);
+				textY += 32;
+			}
+		}
+	}
+
+	public void combat(int event, String attacker, String defender) {
+		gp.gameState = gp.combatDialogueState;
+		combatEvent = cd.combatDialogue(event, attacker, defender);
+	}
+
+	public void useItem() {
+		gp.gameState = gp.combatDialogueState;
+		// cd.getUsedItemName(gp.player.getItemPlayerUsed());
+		// String itemUsed = gp.player.getItemPlayerUsed();
+		combatEvent = cd.usedItemInCombat(gp.player.getItemPlayerUsed());
+	}
+
+	public void getCritical() {
+		isCritical = true;
+	}
+
+	public void enemyDefeated(String defeated, String coinsGained) {
+		gp.gameState = gp.combatDialogueState;
+		combatEvent = cd.defeatedDialogue(gp.monster[gp.currentMap][monsterIndexDisplay].name, coinsGained);
+		// Enemy should start flickering now
+	}
+
+	public void playerDefeated() {
+		gp.gameState = gp.combatDialogueState;
+		// playerIsDefeated = true;
+		combatEvent = cd.defeatedPlayerDialogue();
 	}
 
 	public int getItemIndexOnSlot(int slotCol, int slotRow) {

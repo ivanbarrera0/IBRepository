@@ -66,6 +66,7 @@ public class GamePanel extends JPanel implements Runnable {
 	Map map = new Map(this);
 	SaveLoad saveLoad = new SaveLoad(this);
 	public EntityGenerator eGenerator = new EntityGenerator(this);
+	public CombatDialogue cd = new CombatDialogue(this);
 	Thread gameThread;
 	
 	// Entity and Object
@@ -91,6 +92,10 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int tradeState = 8;
 	public final int mapState = 9;
 	public final int combatState = 10;
+	public final int combatDialogueState = 11;
+	public final int combatInventoryState = 12;
+	public final int transitionToCombatState = 13;
+	public final int transitionFromCombatState = 14;
 
 	// Set player's default position
 
@@ -104,6 +109,8 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void setupGame() {
+		
+		// MUST UNCOMMENT TO HAVE THE OBJECTS AND OTHERS TO APPEAR!!!!
 		
 		aSetter.setObject();
 		aSetter.setNPC();

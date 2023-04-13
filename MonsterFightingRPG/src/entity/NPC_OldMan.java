@@ -45,12 +45,10 @@ public class NPC_OldMan extends Entity {
 	public void setDialogue() {
 		
 		dialogues[0][0] = "Hello sir!";
-		dialogues[0][1] = "So this island is cool ya";
-		dialogues[0][2] = "I'm an old wizard makes me big sad :( \nI miss my youth very much";
+		dialogues[0][1] = "If you want to save your game and heal up go \nto the center of the pool of water and \npress 'enter'";
 		
 		dialogues[1][0] = "I heard that there is a merchant that \nlives in a hut.";
-		dialogues[1][1] = "He has an addiction...";
-		dialogues[1][2] = "He can help you a lot";
+		dialogues[1][2] = "He sells different types of wares";
 		
 		dialogues[2][0] = "Good luck finding him";
 	}

@@ -2,10 +2,12 @@ package main;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Random;
 
 public class KeyHandler implements KeyListener {
 
 	GamePanel gp;
+	CombatDialogue cd = new CombatDialogue(gp);
 
 	public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, shotKeyPressed;
 
@@ -59,6 +61,16 @@ public class KeyHandler implements KeyListener {
 		// Map State
 		else if (gp.gameState == gp.mapState) {
 			mapState(code);
+		}
+		// Combat State
+		else if(gp.gameState == gp.combatState) {
+			combatState(code);
+		}
+		else if(gp.gameState == gp.combatDialogueState) {
+			combatDialogueState(code);
+		}
+		else if(gp.gameState == gp.combatInventoryState) {
+			combatInventoryState(code);
 		}
 
 	}
@@ -161,7 +173,7 @@ public class KeyHandler implements KeyListener {
 
 	public void dialogueState(int code) {
 		if (code == KeyEvent.VK_ENTER) {
-			enterPressed = true; // Change
+			enterPressed = true; // Change to z?
 		}
 	}
 
@@ -311,7 +323,87 @@ public class KeyHandler implements KeyListener {
 			gp.gameState = gp.playState;
 		}
 	}
+	
+	public void combatState(int code) {
+		
+		
+		if (code == KeyEvent.VK_A) {
+			gp.ui.commandNum--;
+			if (gp.ui.commandNum < 0) {
+				gp.ui.commandNum = 3;
+			}
+			gp.playSE(9);
+		}
 
+		if (code == KeyEvent.VK_D) {
+			gp.ui.commandNum++;
+			if (gp.ui.commandNum > 3) {
+				gp.ui.commandNum = 0;
+			}
+			gp.playSE(9);
+		}
+		
+		// Fight Option
+		if (code == KeyEvent.VK_ENTER) {
+			if (gp.ui.commandNum == 0) {
+				gp.ui.combat_attack();
+				gp.ui.commandNum = -1;
+				gp.ui.subState = 0;
+			} 
+		}
+		
+		// Item Option
+		
+		if (code == KeyEvent.VK_ENTER) {
+			if (gp.ui.commandNum == 1) {
+				gp.ui.combat_item();
+				gp.ui.commandNum = -1;
+				gp.ui.subState = 1;
+			} 
+		}
+		
+		
+		// Run Option
+		if (code == KeyEvent.VK_ENTER) {
+			if (gp.ui.commandNum == 3) {
+				
+//				Random random = new Random();
+//			    int randomNumber = random.nextInt(100) + 1;
+//			    
+//			    if(randomNumber > 25) {
+//			    	gp.gameState = gp.dialogueState;
+//			    }
+				
+				// I need to make it so escape is not always allowed
+				gp.gameState = gp.playState;
+				gp.stopMusic();
+				gp.playMusic(0);
+				gp.ui.commandNum = -1;
+				gp.playSE(14);
+				gp.player.invincible = true;
+			} 
+		}
+	}
+	
+	public void combatDialogueState(int code) {
+		
+		if (code == KeyEvent.VK_ENTER) {
+			enterPressed = true; // Change to z?
+		}
+	}
+
+	public void combatInventoryState(int code) {
+		
+		if (code == KeyEvent.VK_ENTER) {
+			gp.player.selectItemCombat();
+			gp.ui.useItem();
+			gp.ui.itemUsedInCombat = true;
+			gp.ui.commandNum = -1;
+			gp.gameState = gp.combatDialogueState;	
+		}
+		playerInventory(code);
+	}
+	
 	// Player's inventory is independent
 	// so we can call it from anywhere
 	public void playerInventory(int code) {
