@@ -46,13 +46,9 @@ public class NPC_Girl extends Entity {
 		
 		dialogues[0][0] = "Hello! :)";
 		dialogues[0][1] = "My name is Marisol";
-		dialogues[0][2] = "Or in english, I am Sea and Sun";
 		
-		dialogues[1][0] = "I sleep late and wake up late";
-		dialogues[1][1] = "I like peanuts...";
-		dialogues[1][2] = "I'm an artist";
-		
-		dialogues[2][0] = "I have a passion for fashion!";
+		dialogues[1][0] = "I'm an artist";
+		dialogues[1][1] = "I did a lot of the art \nfor this game";
 	}
 	
 	public void setAction() {

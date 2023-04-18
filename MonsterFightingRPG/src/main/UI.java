@@ -45,6 +45,8 @@ public class UI {
 	boolean enemyTurn = false;
 	boolean enemyIsDefeated = false;
 	boolean playerIsDefeated = false;
+	boolean escapeAllowed = false;
+	boolean tryToEscape = false;
 
 	public UI(GamePanel gp) {
 		this.gp = gp;
@@ -83,7 +85,7 @@ public class UI {
 
 		// Play State
 		if (gp.gameState == gp.playState) {
-			drawPlayerLife();
+			//drawPlayerLife();
 			drawMessage();
 		}
 		// Pause State
@@ -92,7 +94,7 @@ public class UI {
 		}
 		// Dialogue State
 		if (gp.gameState == gp.dialogueState) {
-			drawPlayerLife();
+			//drawPlayerLife();
 			drawDialogueScreen();
 		}
 		// Character State
@@ -222,10 +224,10 @@ public class UI {
 
 		// Title Name
 
-		g2.setColor(new Color(155, 220, 75));
+		g2.setColor(new Color(54, 11, 169));
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 85F));
-		String text = "Monster Adventure";
+		String text = "Dungeon Depths";
 		int x = getXForCenteredText(text);
 		int y = gp.tileSize * 3;
 
@@ -358,8 +360,8 @@ public class UI {
 		textY += lineHeight;
 		g2.drawString("Life", textX, textY);
 		textY += lineHeight;
-		g2.drawString("Mana", textX, textY);
-		textY += lineHeight;
+//		g2.drawString("Mana", textX, textY);
+//		textY += lineHeight;
 		g2.drawString("Strength", textX, textY);
 		textY += lineHeight;
 		g2.drawString("Dexterity", textX, textY);
@@ -395,10 +397,10 @@ public class UI {
 		g2.drawString(value, textX, textY);
 		textY += lineHeight;
 
-		value = String.valueOf(gp.player.mana + "/" + gp.player.maxMana);
-		textX = getXForAlignToRightText(value, tailX);
-		g2.drawString(value, textX, textY);
-		textY += lineHeight;
+//		value = String.valueOf(gp.player.mana + "/" + gp.player.maxMana);
+//		textX = getXForAlignToRightText(value, tailX);
+//		g2.drawString(value, textX, textY);
+//		textY += lineHeight;
 
 		value = String.valueOf(gp.player.strength);
 		textX = getXForAlignToRightText(value, tailX);
@@ -1312,6 +1314,16 @@ public class UI {
 			combatEvent += "\nIt's a critical hit!";
 			isCritical = false;
 		}
+		
+		if(tryToEscape == true) {
+			if(escapeAllowed == true) {
+				combatEvent = cd.escapeMessage(true);
+			}
+			else {
+				combatEvent = cd.escapeMessage(false);
+			}
+		}
+		
 		// Add the extra line to the string to say you were defeated
 		if (playerIsDefeated == true) {
 			combatEvent += "\nYou were slain...";
@@ -1352,6 +1364,25 @@ public class UI {
 			y += 40;
 		}
 		//
+		
+		if(tryToEscape == true && gp.keyH.enterPressed == true) {
+			gp.keyH.enterPressed = false;
+			tryToEscape = false;
+			if(escapeAllowed == true) {
+				gp.gameState = gp.playState;
+				gp.stopMusic();
+				gp.playMusic(0);
+				gp.ui.commandNum = -1;
+				gp.playSE(14);
+				gp.player.invincible = true;
+			}
+			else {
+				gp.gameState = gp.combatState;
+				enemyTurn = true;
+				gp.ui.commandNum = -1;
+				gp.ui.subState = 0;
+			}
+		}
 
 		if (playerIsDefeated == true && gp.keyH.enterPressed == true) {
 			gp.keyH.enterPressed = false;

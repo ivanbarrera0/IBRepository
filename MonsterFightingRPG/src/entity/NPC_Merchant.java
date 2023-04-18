@@ -3,6 +3,7 @@
 import main.GamePanel;
 import object.OBJ_Axe;
 import object.OBJ_Key;
+import object.OBJ_Potion_Blue;
 import object.OBJ_Potion_Red;
 import object.OBJ_Shield_Blue;
 import object.OBJ_Shield_Wood;
@@ -15,7 +16,7 @@ public class NPC_Merchant extends Entity {
 		super(gp);
 
 		direction = "down";
-		speed = 1;
+		speed = 0;
 		getImage();
 		setDialogue();
 		setItems();
@@ -35,9 +36,9 @@ public class NPC_Merchant extends Entity {
 	
 	public void setDialogue() {
 		
-		dialogues[0][0] = "Yo sir you found me. \nI got the stuff! *sniff* *sniff* "
-				+ "\nI feel great! Let's trade!";
-		dialogues[1][0] = "Come Again, For more STUFF!\n*twitch*";
+		dialogues[0][0] = "Yo sir you found me. \nI got the stuff"
+				+ "\nLet's trade!";
+		dialogues[1][0] = "Come Again!";
 		dialogues[2][0] = "You too broke...";
 		dialogues[3][0] = "You got no room!";
 		dialogues[4][0] = "You cannot sell an equipped item!";
@@ -46,6 +47,7 @@ public class NPC_Merchant extends Entity {
 	public void setItems() {
 		
 		inventory.add(new OBJ_Potion_Red(gp));
+		inventory.add(new OBJ_Potion_Blue(gp));
 		inventory.add(new OBJ_Key(gp));
 		inventory.add(new OBJ_Sword_Normal(gp));
 		inventory.add(new OBJ_Axe(gp));

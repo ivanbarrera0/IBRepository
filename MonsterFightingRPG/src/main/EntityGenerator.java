@@ -2,16 +2,20 @@ package main;
 
 import entity.Entity;
 import object.OBJ_Axe;
+import object.OBJ_Axe_Diamond;
 import object.OBJ_Chest;
 import object.OBJ_Coin_Bronze;
 import object.OBJ_Door;
 import object.OBJ_Heart;
 import object.OBJ_Key;
 import object.OBJ_ManaCrystal;
+import object.OBJ_Potion_Blue;
+import object.OBJ_Potion_Gold;
 import object.OBJ_Potion_Red;
 import object.OBJ_Rock;
 import object.OBJ_Shield_Blue;
 import object.OBJ_Shield_Wood;
+import object.OBJ_Sword_Diamond;
 import object.OBJ_Sword_Normal;
 
 public class EntityGenerator {
@@ -64,6 +68,18 @@ public class EntityGenerator {
 			break;
 		case OBJ_Coin_Bronze.objName:
 			obj = new OBJ_Coin_Bronze(gp);
+			break;
+		case OBJ_Potion_Blue.objName:
+			obj = new OBJ_Potion_Blue(gp);
+			break;
+		case OBJ_Potion_Gold.objName:
+			obj = new OBJ_Potion_Gold(gp);
+			break;
+		case OBJ_Axe_Diamond.objName:
+			obj = new OBJ_Axe_Diamond(gp);
+			break;
+		case OBJ_Sword_Diamond.objName:
+			obj = new OBJ_Sword_Diamond(gp);
 			break;
 		}
 		return obj;

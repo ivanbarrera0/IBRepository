@@ -3,6 +3,7 @@ package main;
 import entity.NPC_Girl;
 import entity.NPC_Merchant;
 import entity.NPC_OldMan;
+import entity.NPC_OldManCave;
 import monster.MON_Bat;
 import monster.MON_Ghost;
 import monster.MON_GreenSlime;
@@ -12,6 +13,7 @@ import monster.MON_Snake;
 import monster.MON_Spider;
 import monster.MON_Zombie;
 import object.OBJ_Axe;
+import object.OBJ_Axe_Diamond;
 import object.OBJ_Boots;
 import object.OBJ_Chest;
 import object.OBJ_Coin_Bronze;
@@ -19,9 +21,12 @@ import object.OBJ_Door;
 import object.OBJ_Heart;
 import object.OBJ_Key;
 import object.OBJ_ManaCrystal;
+import object.OBJ_Potion_Blue;
+import object.OBJ_Potion_Gold;
 import object.OBJ_Potion_Red;
 import object.OBJ_Save;
 import object.OBJ_Shield_Blue;
+import object.OBJ_Sword_Diamond;
 import tile_interactive.IT_DryTree;
 
 public class AssetSetter {
@@ -40,11 +45,6 @@ public class AssetSetter {
 		gp.obj[mapNum][i] = new OBJ_Potion_Red(gp);
 		gp.obj[mapNum][i].worldX = gp.tileSize*20;
 		gp.obj[mapNum][i].worldY = gp.tileSize*43;
-		i++;
-		
-		gp.obj[mapNum][i] = new OBJ_Door(gp);
-		gp.obj[mapNum][i].worldX = gp.tileSize*7;
-		gp.obj[mapNum][i].worldY = gp.tileSize*46;
 		i++;
 		
 		gp.obj[mapNum][i] = new OBJ_Potion_Red(gp);
@@ -85,44 +85,44 @@ public class AssetSetter {
 		i = 0;
 		
 		gp.obj[mapNum][i] = new OBJ_Chest(gp);
-		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Red(gp));
-		gp.obj[mapNum][i].worldX = gp.tileSize*5;
+		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Blue(gp));
+		gp.obj[mapNum][i].worldX = gp.tileSize*6;
 		gp.obj[mapNum][i].worldY = gp.tileSize*38;
 		i++;
 		
 		gp.obj[mapNum][i] = new OBJ_Chest(gp);
-		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Red(gp));
+		gp.obj[mapNum][i].setLoot(new OBJ_Sword_Diamond(gp));
 		gp.obj[mapNum][i].worldX = gp.tileSize*6;
 		gp.obj[mapNum][i].worldY = gp.tileSize*31;
 		i++;
 		
 		// The next two should contain rare items
 		gp.obj[mapNum][i] = new OBJ_Chest(gp);
-		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Red(gp));
+		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Gold(gp));
 		gp.obj[mapNum][i].worldX = gp.tileSize*46;
 		gp.obj[mapNum][i].worldY = gp.tileSize*41;
 		i++;
 		
 		gp.obj[mapNum][i] = new OBJ_Chest(gp);
-		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Red(gp));
+		gp.obj[mapNum][i].setLoot(new OBJ_Axe_Diamond(gp));
 		gp.obj[mapNum][i].worldX = gp.tileSize*46;
 		gp.obj[mapNum][i].worldY = gp.tileSize*45;
 		i++;
 		
 		gp.obj[mapNum][i] = new OBJ_Chest(gp);
-		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Red(gp));
+		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Gold(gp));
 		gp.obj[mapNum][i].worldX = gp.tileSize*46;
 		gp.obj[mapNum][i].worldY = gp.tileSize*29;
 		i++;
 		
 		gp.obj[mapNum][i] = new OBJ_Chest(gp);
-		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Red(gp));
+		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Blue(gp));
 		gp.obj[mapNum][i].worldX = gp.tileSize*46;
 		gp.obj[mapNum][i].worldY = gp.tileSize*4;
 		i++;
 		
 		gp.obj[mapNum][i] = new OBJ_Chest(gp);
-		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Red(gp));
+		gp.obj[mapNum][i].setLoot(new OBJ_Potion_Blue(gp));
 		gp.obj[mapNum][i].worldX = gp.tileSize*25;
 		gp.obj[mapNum][i].worldY = gp.tileSize*5;
 		i++;
@@ -142,15 +142,11 @@ public class AssetSetter {
 //		gp.npc[mapNum][i].worldX = gp.tileSize*22;
 //		gp.npc[mapNum][i].worldY = gp.tileSize*22;
 //		i++;
-//		
-//		gp.npc[mapNum][i] = new NPC_Girl(gp);
-//		gp.npc[mapNum][i].worldX = gp.tileSize*23;
-//		gp.npc[mapNum][i].worldY = gp.tileSize*8;
-//		
+//			
 		mapNum = 1;
 		i = 0;
 		
-		gp.npc[mapNum][i] = new NPC_OldMan(gp);
+		gp.npc[mapNum][i] = new NPC_OldManCave(gp);
 		gp.npc[mapNum][i].worldX = gp.tileSize*6;
 		gp.npc[mapNum][i].worldY = gp.tileSize*7;
 		i++;
@@ -161,7 +157,12 @@ public class AssetSetter {
 		gp.npc[mapNum][i] = new NPC_Merchant(gp);
 		gp.npc[mapNum][i].worldX = gp.tileSize*27;
 		gp.npc[mapNum][i].worldY = gp.tileSize*19;
+		i++;
 		
+		gp.npc[mapNum][i] = new NPC_Girl(gp);
+		gp.npc[mapNum][i].worldX = gp.tileSize*25;
+		gp.npc[mapNum][i].worldY = gp.tileSize*22;	
+		i++;
 	}
 	
 	public void setMonster() {

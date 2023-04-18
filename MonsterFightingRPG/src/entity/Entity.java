@@ -329,6 +329,12 @@ public class Entity {
 				gp.playSE(6);
 				gp.gameState = gp.transitionToCombatState;
 				gp.stopMusic();
+//				if(gp.monster[gp.ui.monsterIndexDisplay][gp.currentMap].name == "Señor Ghost") {
+//					gp.playMusic(15);
+//				}
+//				else {
+//					gp.playMusic(16);
+//				}
 				gp.playMusic(15);
 			}
 		}

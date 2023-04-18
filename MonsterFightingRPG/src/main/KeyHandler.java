@@ -127,9 +127,9 @@ public class KeyHandler implements KeyListener {
 		if (code == KeyEvent.VK_ENTER) {
 			enterPressed = true;
 		}
-		if (code == KeyEvent.VK_F) {
-			shotKeyPressed = true;
-		}
+//		if (code == KeyEvent.VK_F) {
+//			shotKeyPressed = true;
+//		}
 		if (code == KeyEvent.VK_ESCAPE) {
 			gp.gameState = gp.optionsState;
 		}
@@ -367,20 +367,26 @@ public class KeyHandler implements KeyListener {
 		if (code == KeyEvent.VK_ENTER) {
 			if (gp.ui.commandNum == 3) {
 				
-//				Random random = new Random();
-//			    int randomNumber = random.nextInt(100) + 1;
-//			    
-//			    if(randomNumber > 25) {
-//			    	gp.gameState = gp.dialogueState;
-//			    }
+				Random random = new Random();
+			    int randomNumber = random.nextInt(100) + 1;
+			    
+			    if(randomNumber >= 50) {
+			    	gp.ui.escapeAllowed = true;
+			    }
+			    else {
+			    	gp.ui.escapeAllowed = false;
+			    }
+			    
+			    gp.ui.tryToEscape = true;
+			    gp.gameState = gp.combatDialogueState;
 				
 				// I need to make it so escape is not always allowed
-				gp.gameState = gp.playState;
-				gp.stopMusic();
-				gp.playMusic(0);
-				gp.ui.commandNum = -1;
-				gp.playSE(14);
-				gp.player.invincible = true;
+//				gp.gameState = gp.playState;
+//				gp.stopMusic();
+//				gp.playMusic(0);
+//				gp.ui.commandNum = -1;
+//				gp.playSE(14);
+//				gp.player.invincible = true;
 			} 
 		}
 	}

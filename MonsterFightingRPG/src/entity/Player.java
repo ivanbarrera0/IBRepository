@@ -9,11 +9,15 @@ import main.CombatDialogue;
 import main.GamePanel;
 import main.KeyHandler;
 import object.OBJ_Axe;
+import object.OBJ_Axe_Diamond;
 import object.OBJ_Fireball;
 import object.OBJ_Key;
+import object.OBJ_Potion_Blue;
+import object.OBJ_Potion_Gold;
 import object.OBJ_Potion_Red;
 import object.OBJ_Rock;
 import object.OBJ_Shield_Wood;
+import object.OBJ_Sword_Diamond;
 import object.OBJ_Sword_Normal;
 
 public class Player extends Entity {
@@ -77,7 +81,7 @@ public class Player extends Entity {
 		exp = 0;
 		nextLevelExp = 5;
 		coin = 150;
-		currentWeapon = new OBJ_Axe(gp);
+		currentWeapon = new OBJ_Sword_Normal(gp);
 		currentShield = new OBJ_Shield_Wood(gp);
 		projectile = new OBJ_Fireball(gp);
 		// projectile = new OBJ_Rock(gp);
@@ -116,13 +120,6 @@ public class Player extends Entity {
 		inventory.clear();
 		inventory.add(currentWeapon);
 		inventory.add(currentShield);
-		inventory.add(new OBJ_Key(gp));
-		inventory.add(new OBJ_Potion_Red(gp));
-		inventory.add(new OBJ_Sword_Normal(gp));
-		inventory.add(new OBJ_Potion_Red(gp));
-		inventory.add(new OBJ_Potion_Red(gp));
-		inventory.add(new OBJ_Potion_Red(gp));
-		inventory.add(new OBJ_Potion_Red(gp));
 		inventory.add(new OBJ_Potion_Red(gp));
 	}
 
@@ -353,6 +350,7 @@ public class Player extends Entity {
 			// Check monster collision
 			int monsterIndex = gp.cChecker.checkEntity(this, gp.monster);
 			damageMonster(monsterIndex, attack);
+			//initiateCombat();
 
 			int iTileIndex = gp.cChecker.checkEntity(this, gp.iTile);
 			damageInteractiveTile(iTileIndex);

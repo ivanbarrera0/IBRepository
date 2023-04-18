@@ -33,6 +33,7 @@ public class Sound {
 		soundURL[13] = getClass().getResource("/sound/stairs.wav");
 		soundURL[14] = getClass().getResource("/sound/runningongrassv2.wav");
 		soundURL[15] = getClass().getResource("/sound/TheSacrificeandtheSaint.wav");
+		soundURL[16] = getClass().getResource("/sound/WithMilasDivineProtection.wav");
 	}
 	
 	public void setFile(int i) {

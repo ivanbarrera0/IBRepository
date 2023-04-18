@@ -20,12 +20,12 @@ public class MON_Señor_Ghost extends Entity {
 
 		type = type_monster;
 		name = "Señor Ghost";
-		speed = 1;
-		maxLife = 20;
+		speed = 4;
+		maxLife = 100;
 		life = maxLife;
-		attack = 4;
-		defense = 2;
-		exp = 10;
+		attack = 25;
+		defense = 10;
+		exp = 1000;
 		projectile = new OBJ_Rock(gp);
 
 		solidArea.x = 3;

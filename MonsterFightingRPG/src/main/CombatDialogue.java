@@ -52,9 +52,9 @@ public class CombatDialogue {
 
 		String dialogue = "";
 		dialogue += "Player used " + item;
-		if (item == "Red Potion") {
+		if (item == "Red Potion" || item == "Blue Potion" || item == "Gold Potion") {
 			dialogue += " you recovered \nsome health";
-		} else if (item == "Woodcutter's Axe" || item == "Normal Sword") {
+		} else if (item == "Woodcutter's Axe" || item == "Normal Sword" || item == "Diamond Sword" || item == "Diamond Axe") {
 			dialogue = "Player became equipped with " + item;
 		} else if (item == "Key") {
 			dialogue = "You showed the monster a key...";
@@ -62,7 +62,7 @@ public class CombatDialogue {
 		return dialogue;
 	}
 	
-	public String escapeMessage() {
+	public String escapeMessage(boolean escape) {
 		
 		String dialogue = "";
 		
@@ -70,7 +70,7 @@ public class CombatDialogue {
 			dialogue = "You ran away";
 		}
 		else {
-			dialogue = "You were not able to escape";
+			dialogue = "You were not able to escape...";
 		}
 		
 		return dialogue;
@@ -87,7 +87,7 @@ public class CombatDialogue {
 	public void criticalHitCheck() {
 		Random random = new Random();
 		int randomNumber = random.nextInt(100) + 1;
-		if (randomNumber <= 50) {
+		if (randomNumber <= 3) {
 			isCritical = true;
 		}
 	}
